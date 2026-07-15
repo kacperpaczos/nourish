@@ -1,0 +1,13 @@
+[Unit]
+Description=MX Master gesture button daemon
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/mx-gesture-daemon
+Restart=no
+Environment=RUST_LOG=info
+
+[Install]
+WantedBy=graphical-session.target

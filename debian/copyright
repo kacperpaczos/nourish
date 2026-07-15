@@ -1,0 +1,20 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: y5
+Upstream-Contact: https://github.com/nourish-snowies/y5
+Source: https://github.com/nourish-snowies/y5
+
+Files: *
+Copyright: y5 contributors
+License: Apache-2.0 and MIT
+ The y5 compositor is dual-licensed under the Apache License 2.0 and the MIT
+ License. See LICENSE-APACHE and LICENSE-MIT in the source tree.
+ .
+ On Debian systems, the complete text of the Apache License 2.0 can be found in
+ /usr/share/common-licenses/Apache-2.0 and the MIT license in
+ /usr/share/common-licenses/MIT.
+
+Files: vendor/*
+Copyright: respective upstream authors
+License: various
+ Vendored dependencies retain their original licenses. See each crate or
+ project under vendor/ for license texts.

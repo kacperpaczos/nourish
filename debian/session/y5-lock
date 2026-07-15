@@ -1,0 +1,7 @@
+# /etc/pam.d/y5-lock
+#
+# PAM service for the y5 compositor's lock screen.
+# Mirrors the system's normal interactive password policy on Debian/Ubuntu.
+
+auth     include    common-auth
+account  include    common-account

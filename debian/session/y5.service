@@ -1,0 +1,16 @@
+[Unit]
+Description=Y5 Wayland compositor (Y5 Compositor)
+BindsTo=graphical-session.target
+Before=graphical-session.target
+Wants=graphical-session-pre.target
+After=graphical-session-pre.target
+Wants=xdg-desktop-autostart.target
+Before=xdg-desktop-autostart.target
+
+[Service]
+Slice=session.slice
+Type=exec
+ExecStart=/usr/bin/y5.compositor.desktop
+
+[Install]
+WantedBy=graphical-session.target

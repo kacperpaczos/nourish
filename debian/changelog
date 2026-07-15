@@ -1,0 +1,7 @@
+y5-compositor (1.4.0-1ubuntu1) resolute; urgency=medium
+
+  * Initial Debian package for Ubuntu 26.04 PPA.
+  * Full bundle: compositor, settings tool, devtool, polkit agent,
+    xwayland-satellite, MX gesture daemon, and Wayland session files.
+
+ -- Kacper Paczos <kacperpaczos@users.noreply.github.com>  Tue, 14 Jul 2026 17:06:00 +0200

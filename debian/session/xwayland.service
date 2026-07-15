@@ -1,0 +1,13 @@
+[Unit]
+Description=X Wayland Satellite (y5, with --popup-fix)
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/sleep 20
+ExecStart=/usr/bin/xwayland-satellite :12 --force-scale 1 --ignore-fractional-scale --popup-fix
+Restart=never
+
+[Install]
+WantedBy=graphical-session.target

@@ -1,0 +1,61 @@
+y5-compositor for Debian / Ubuntu
+=================================
+
+Installation
+------------
+
+  sudo apt install y5-compositor
+
+First-time configuration
+------------------------
+
+The compositor requires a complete settings file before it starts:
+
+  y5.compositor.settings
+
+This creates ~/.config/y5.compositor/settings.json. The session wrapper refuses
+to launch without it.
+
+Starting a session
+------------------
+
+Log out of your current session and pick **Y5 Compositor** from your display
+manager's session menu.
+
+Alternatively, from an existing graphical session:
+
+  systemctl --user enable --now y5.service
+
+Optional components
+-------------------
+
+These user services are installed system-wide under /usr/lib/systemd/user/:
+
+  systemctl --user enable --now y5-polkit-agent.service
+  systemctl --user enable --now xwayland.service
+  systemctl --user enable --now mx-gesture-daemon.service
+
+MX Master gesture daemon
+------------------------
+
+Copy the example config and adjust actions for your desktop:
+
+  mkdir -p ~/.config/mx-gesture-daemon
+  cp /usr/share/y5-compositor/mx-gesture-daemon/config.example.toml \
+     ~/.config/mx-gesture-daemon/config.toml
+
+Add your user to the plugdev group if udev access is required:
+
+  sudo usermod -aG plugdev "$USER"
+
+Developer log viewer
+--------------------
+
+Launch y5.compositor.monitor from the application menu or a terminal.
+
+Build from source
+-----------------
+
+  sudo apt install devscripts debhelper build-essential equivs
+  sudo mk-build-deps -i -r debian/control
+  debuild -us -uc -b

@@ -1,0 +1,12 @@
+[Unit]
+Description=Y5 polkit authentication agent
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/y5-polkit-agent
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

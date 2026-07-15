@@ -1,0 +1,5 @@
+extend-diff-ignore = "^target/"
+extend-diff-ignore = "^\.cache/"
+extend-diff-ignore = "^debian/stage/"
+extend-diff-ignore = "^debian/cargo-home/"
+extend-diff-ignore = "^debian/cargo-target/"

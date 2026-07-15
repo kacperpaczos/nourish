@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+configure)
+	if command -v udevadm >/dev/null 2>&1; then
+		udevadm control --reload-rules 2>/dev/null || true
+		udevadm trigger --subsystem-match=hidraw 2>/dev/null || true
+	fi
+	echo
+	echo "y5-compositor installed."
+	echo "Run 'y5.compositor.settings' to create ~/.config/y5.compositor/settings.json,"
+	echo "then log out and select the 'Y5 Compositor' session."
+	echo
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0
