@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Y5 Compositor
-Comment=Y5 Compositor — Y5 Compositor
+Comment=Pannable Wayland desktop (Y5)
 Exec=systemctl --user --wait start y5.service
 Type=Application
 DesktopNames=Y5Compositor

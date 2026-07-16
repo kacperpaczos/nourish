@@ -1,9 +1,9 @@
 [Desktop Entry]
-Categories=
-Comment=y5 developer log viewer (Tauri + React)
+Categories=Development;Utility;
+Comment=y5 developer log viewer
 Exec=y5.compositor.monitor
 StartupWMClass=y5.compositor.monitor
-Icon=y5.compositor.monitor
+Icon=utilities-terminal
 Name=y5.compositor.monitor
 Terminal=false
 Type=Application

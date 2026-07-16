@@ -6,11 +6,14 @@ Wants=graphical-session-pre.target
 After=graphical-session-pre.target
 Wants=xdg-desktop-autostart.target
 Before=xdg-desktop-autostart.target
+Wants=y5-polkit-agent.service
+Wants=xwayland.service
+After=y5-polkit-agent.service
 
 [Service]
 Slice=session.slice
 Type=exec
-ExecStart=/usr/bin/y5.compositor.desktop
+ExecStart=/usr/libexec/y5-compositor/session
 
 [Install]
 WantedBy=graphical-session.target

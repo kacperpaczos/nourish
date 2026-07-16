@@ -1,19 +1,13 @@
 #!/bin/bash
-# /usr/bin/y5.compositor.desktop — ExecStart of y5.service
-# Packaged by y5-compositor Debian package.
+# /usr/libexec/y5-compositor/session — ExecStart of y5.service
+set -euo pipefail
 
-export RUST_LOG=info,smithay=info
-export MESA_DEBUG=1
-
-# Session identity — must match DesktopNames= in the wayland-session entry.
 export XDG_CURRENT_DESKTOP=Y5Compositor
 export XDG_SESSION_TYPE=wayland
 
 # The compositor reads ALL of its configuration from settings.json (every field
 # required; it panics if the file is missing or partial). This wrapper NEVER
-# writes that file — it belongs to the user. Configure it with the
-# 'y5.compositor.settings' tool. If it's absent, say so and stop rather than
-# launching into a panic.
+# writes that file — configure with 'y5.compositor.settings'.
 _y5_cfg="${XDG_CONFIG_HOME:-$HOME/.config}/y5.compositor"
 if [ ! -f "$_y5_cfg/settings.json" ]; then
 	echo "y5: no configuration at $_y5_cfg/settings.json" >&2
