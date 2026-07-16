@@ -1,7 +1,16 @@
+y5-compositor (1.4.0-1ubuntu2) resolute; urgency=medium
+
+  * Quilt source with offline Cargo/npm vendoring and bundled rustc sysroot.
+  * Always compile on Launchpad (no prebuilt stage in the source tarball).
+  * Drop duplicate y5.compositor.dev; session wrapper moved to libexec.
+  * Depends on polkitd and xdg-desktop-portal-gtk; drop MESA_DEBUG.
+
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Thu, 16 Jul 2026 16:30:00 +0200
+
 y5-compositor (1.4.0-1ubuntu1) resolute; urgency=medium
 
   * Initial Debian package for Ubuntu 26.04 PPA.
   * Full bundle: compositor, settings tool, devtool, polkit agent,
     xwayland-satellite, MX gesture daemon, and Wayland session files.
 
- -- Kacper Paczos <kacperpaczos@users.noreply.github.com>  Tue, 14 Jul 2026 17:06:00 +0200
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Tue, 14 Jul 2026 17:06:00 +0200

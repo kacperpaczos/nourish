@@ -4,36 +4,58 @@ export DH_VERBOSE = 1
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export Y5_SKIP_LINT = 1
 export Y5_TARGET_DIR = $(CURDIR)/debian/cargo-target
-export CARGO_HOME = $(CURDIR)/debian/cargo-home
-export RUSTUP_HOME = $(CURDIR)/debian/rustup-home
-export PATH := $(CURDIR)/debian/cargo-home/bin:$(PATH)
+export CARGO_HOME = $(CURDIR)/debian/cargo-home-build
+export CARGO_NET_OFFLINE = true
 
 %:
 	dh $@
 
+# dh_clean deletes *.orig by default; cargo-vendor checksums require Cargo.toml.orig.
+override_dh_clean:
+	dh_clean -X.orig
+
 override_dh_auto_clean:
-	rm -rf debian/tmp debian/rustup-init
+	rm -rf \
+		debian/tmp \
+		debian/stage \
+		debian/tmp-stage \
+		debian/cargo-home-build \
+		debian/cargo-target \
+		debian/y5-compositor \
+		debian/.debhelper \
+		compositor.developer/developer.tool/developer.tool.window/logs/node_modules
+	# Restore generated per-project vendor configs; keep cargo-vendor/ + npm-vendor/.
+	@find . -type f -name 'config.toml' -path '*/.cargo/*' \
+		-not -path './vendor/*' \
+		-not -path './.cargo/config.toml' \
+		-not -path './cargo-vendor/*' 2>/dev/null | while read -r cfg; do \
+		if grep -q 'y5-debian-vendor' "$$cfg" 2>/dev/null; then \
+			if [ -f "$${cfg}.y5-bak" ]; then mv -f "$${cfg}.y5-bak" "$$cfg"; \
+			else rm -f "$$cfg"; fi; \
+		fi; \
+	done
+	# Component target dirs created during the package build.
+	rm -rf \
+		compositor.installer/component/pollkit-agent/target \
+		compositor.installer/component/mx-gesture-daemon/target \
+		compositor.installer/component/settings-editor/target \
+		compositor.installer/component/xwayland-satellite/xwayland-fixes/target \
+		compositor.developer/developer.tool/developer.tool.window/logs/src-tauri/target
+
+override_dh_auto_configure:
+	@test -d $(CURDIR)/cargo-vendor/compositor \
+		|| { echo "debian/rules: cargo-vendor/ missing — rebuild orig with debian/scripts/make-orig.sh" >&2; exit 1; }
+	@test -f $(CURDIR)/npm-vendor/logs-node_modules.tar.xz \
+		|| { echo "debian/rules: npm-vendor/ missing — rebuild orig with debian/scripts/make-orig.sh" >&2; exit 1; }
+	@test -x $(CURDIR)/rust-toolchain-dist/bin/rustc \
+		|| { echo "debian/rules: rust-toolchain-dist/ missing — run debian/scripts/bundle-rust-toolchain.sh / make-orig.sh" >&2; exit 1; }
 
 override_dh_auto_build:
-	@if [ ! -f debian/stage/binaries/y5.compositor ]; then \
-		./link.all.sh; \
-		if ! ( command -v rustc >/dev/null 2>&1 \
-			&& rustc --version | grep -qE 'rustc 1\.(8[5-9]|[9][0-9]|[1-9][0-9]{2,})' ); then \
-			curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o $(CURDIR)/debian/rustup-init \
-			&& sh $(CURDIR)/debian/rustup-init -y --no-modify-path --profile minimal --default-toolchain stable \
-			&& rm -f $(CURDIR)/debian/rustup-init; \
-		fi; \
-		compositor.installer/prepare.sh --out=$(CURDIR)/debian --skip=installer; \
-	fi
+	debian/scripts/build-bundle.sh
 
 override_dh_auto_install:
 	debian/install-from-stage.sh debian/y5-compositor
 
-override_dh_install:
-	:
-
-override_dh_missing:
-	:
-
+# Bevy/Vulkan binaries are huge; dwz is not useful here.
 override_dh_dwz:
 	:
