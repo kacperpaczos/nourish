@@ -1,3 +1,18 @@
+y5-compositor (1.4.1-1ubuntu1) resolute; urgency=medium
+
+  * New upstream packaging revision 1.4.1 (new orig for binary package split).
+  * Split into component binary packages; add y5-compositor-full metapackage.
+  * Document Fedora tarball vs PPA tracks in document/DISTRIBUTION.md.
+
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Thu, 16 Jul 2026 18:15:00 +0200
+
+y5-compositor (1.4.0-1ubuntu3) resolute; urgency=medium
+
+  * Split into component binary packages; add y5-compositor-full metapackage.
+  * Document Fedora tarball vs PPA tracks in document/DISTRIBUTION.md.
+
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Thu, 16 Jul 2026 17:30:00 +0200
+
 y5-compositor (1.4.0-1ubuntu2) resolute; urgency=medium
 
   * Quilt source with offline Cargo/npm vendoring and bundled rustc sysroot.
