@@ -5,6 +5,15 @@
 export DH_VERBOSE = 1
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export Y5_SKIP_LINT = 1
+
+# Cap cargo parallelism: linking the Bevy/wgpu binaries is extremely
+# memory-hungry and an uncapped `cargo build` OOMs small builders.
+# Honour DEB_BUILD_OPTIONS parallel=N; default conservatively to 2.
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+export CARGO_BUILD_JOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+else
+export CARGO_BUILD_JOBS = 2
+endif
 export Y5_TARGET_DIR = $(CURDIR)/debian/cargo-target
 export CARGO_HOME = $(CURDIR)/debian/cargo-home-build
 export CARGO_NET_OFFLINE = true
@@ -31,6 +40,7 @@ override_dh_auto_clean:
 		debian/y5-mx-gesture-daemon \
 		debian/y5-compositor-full \
 		debian/.debhelper \
+		debian/rustup-home-empty \
 		compositor.developer/developer.tool/developer.tool.window/logs/node_modules
 	# Restore generated per-project vendor configs; keep cargo-vendor/ + npm-vendor/.
 	@find . -type f -name 'config.toml' -path '*/.cargo/*' \

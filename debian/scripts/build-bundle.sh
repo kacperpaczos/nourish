@@ -34,6 +34,13 @@ export CARGO_NET_OFFLINE=true
 export CARGO_HOME="${CARGO_HOME:-$ROOT/debian/cargo-home-build}"
 export Y5_SKIP_LINT="${Y5_SKIP_LINT:-1}"
 export Y5_TARGET_DIR="$TARGET_DIR"
+# Cap parallelism (linking Bevy/wgpu binaries is memory-hungry; uncapped
+# cargo OOMs small builders). debian/rules passes DEB_BUILD_OPTIONS through.
+export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-2}"
+# Link hardening for the Rust binaries. NOTE: a RUSTFLAGS env var replaces
+# the repo-root .cargo/config.toml rustflags wholesale, so it must repeat
+# the "-A warnings" from there. This is deliberate and packaging-only.
+export RUSTFLAGS="-A warnings -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now"
 # Always rebuild stage for packaging (never skip when binaries already exist).
 rm -rf "$STAGE"
 mkdir -p "$CARGO_HOME" "$TARGET_DIR" "$BIN" "$TPL/pam" "$TPL/mx" "$TPL/xwayland"
@@ -48,7 +55,7 @@ if [ ! -x "$ROOT/rust-toolchain-dist/bin/rustc" ] || [ ! -x "$ROOT/rust-toolchai
 fi
 # Prefer the bundled toolchain (MSRV); ignore rustup overrides from rust-toolchain.toml.
 export PATH="$ROOT/rust-toolchain-dist/bin:$PATH"
-export RUSTUP_TOOLCHAIN=""
+unset RUSTUP_TOOLCHAIN
 export RUSTC="$ROOT/rust-toolchain-dist/bin/rustc"
 export CARGO="$ROOT/rust-toolchain-dist/bin/cargo"
 # Prevent rustup from intercepting if installed on the builder.
@@ -101,9 +108,9 @@ POLKIT="$ROOT/compositor.installer/component/pollkit-agent"
 setup polkit "$POLKIT"
 (
 	cd "$POLKIT"
-	"$CARGO" build --release --frozen --offline --target-dir="$POLKIT/target"
+	"$CARGO" build --release --frozen --offline --target-dir="$TARGET_DIR"
 )
-install -m755 "$POLKIT/target/release/iced_polkit_agent" "$BIN/y5-polkit-agent"
+install -m755 "$TARGET_DIR/release/iced_polkit_agent" "$BIN/y5-polkit-agent"
 
 # 4) MX gesture daemon
 log "mx-gesture-daemon"
@@ -111,9 +118,9 @@ MX="$ROOT/compositor.installer/component/mx-gesture-daemon"
 setup mx "$MX"
 (
 	cd "$MX"
-	"$CARGO" build --release --frozen --offline --target-dir="$MX/target"
+	"$CARGO" build --release --frozen --offline --target-dir="$TARGET_DIR"
 )
-install -m755 "$MX/target/release/mx-gesture-daemon" "$BIN/mx-gesture-daemon"
+install -m755 "$TARGET_DIR/release/mx-gesture-daemon" "$BIN/mx-gesture-daemon"
 install -m644 "$MX/42-logitech-hidpp.rules" "$TPL/mx/42-logitech-hidpp.rules"
 install -m644 "$MX/config.example.toml" "$TPL/mx/config.example.toml"
 
@@ -123,9 +130,9 @@ XW="$ROOT/compositor.installer/component/xwayland-satellite/xwayland-fixes"
 setup xwayland "$XW"
 (
 	cd "$XW"
-	"$CARGO" build --release --frozen --offline --target-dir="$XW/target"
+	"$CARGO" build --release --frozen --offline --target-dir="$TARGET_DIR"
 )
-install -m755 "$XW/target/release/xwayland-satellite" "$BIN/xwayland-satellite"
+install -m755 "$TARGET_DIR/release/xwayland-satellite" "$BIN/xwayland-satellite"
 
 # 6) Settings tool
 log "settings tool"
@@ -133,8 +140,8 @@ SET="$ROOT/compositor.installer/component/settings-editor"
 setup settings "$SET"
 (
 	cd "$SET"
-	"$CARGO" build --release --frozen --offline --target-dir="$SET/target"
+	"$CARGO" build --release --frozen --offline --target-dir="$TARGET_DIR"
 )
-install -m755 "$SET/target/release/y5-compositor-settings" "$BIN/y5.compositor.settings"
+install -m755 "$TARGET_DIR/release/y5-compositor-settings" "$BIN/y5.compositor.settings"
 
 log "stage ready at $STAGE"

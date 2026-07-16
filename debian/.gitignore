@@ -5,6 +5,7 @@ cargo-home/
 cargo-home-build/
 cargo-target/
 rustup-home/
+rustup-home-empty/
 rustup-init
 files
 package.tar.gz
