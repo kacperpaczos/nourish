@@ -1,3 +1,20 @@
+y5-compositor (1.4.1-1ubuntu1) resolute; urgency=medium
+
+  The former monolithic y5-compositor package is split into components.
+  `y5-compositor` is now the core session only.
+
+  To keep the previous full bundle after upgrade:
+
+    sudo apt install y5-compositor-full
+
+  First-time setup still requires:
+
+    y5.compositor.settings
+
+  (package y5-compositor-settings; recommended by y5-compositor).
+
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Thu, 16 Jul 2026 18:15:00 +0200
+
 y5-compositor (1.4.0-1ubuntu2) resolute; urgency=medium
 
   First-time setup: run `y5.compositor.settings` to create

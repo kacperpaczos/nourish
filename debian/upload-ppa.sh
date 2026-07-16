@@ -17,7 +17,11 @@ cd "$ROOT"
 # must never enter debian.tar.xz.
 rm -rf debian/stage debian/tmp debian/tmp-stage debian/cargo-home \
 	debian/cargo-home-build debian/cargo-target debian/rustup-home \
-	debian/rustup-home-empty debian/y5-compositor debian/.debhelper \
+	debian/rustup-home-empty debian/.debhelper \
+	debian/y5-compositor debian/y5-compositor-settings \
+	debian/y5-compositor-monitor debian/y5-polkit-agent \
+	debian/y5-xwayland-satellite debian/y5-mx-gesture-daemon \
+	debian/y5-compositor-full \
 	debian/files debian/package.tar.gz debian/SHA256SUMS \
 	debian/*debhelper* debian/debhelper-build-stamp
 

@@ -60,18 +60,97 @@ Depends:
  xwayland,
  mesa-vulkan-drivers,
  ffmpeg,
- polkitd,
  xdg-desktop-portal-gtk
 Recommends:
+ y5-compositor-settings,
+ y5-polkit-agent,
+ y5-xwayland-satellite,
  vulkan-tools,
  mesa-utils
-Description: Y5 Wayland compositor (full bundle)
- y5 is a Wayland compositor with a pannable/zoomable desktop, screen capture,
- and integrated developer tooling.
+Suggests:
+ y5-compositor-monitor,
+ y5-mx-gesture-daemon,
+ y5-compositor-full
+Description: Y5 Wayland compositor (core session)
+ y5 is a Wayland compositor with a pannable/zoomable desktop and screen
+ capture.
  .
- This package ships the production compositor (DRM/KMS backend), the settings
- editor, developer log viewer, polkit agent, patched xwayland-satellite, MX
- Master gesture daemon, and display-manager session files.
+ This package installs the DRM/KMS compositor binary, the display-manager
+ session entry, systemd user units for the session, PAM, and portal config.
  .
- Before starting a session, run `y5.compositor.settings` to create
- ~/.config/y5.compositor/settings.json.
+ Run `y5.compositor.settings` (from y5-compositor-settings) before the first
+ session to create ~/.config/y5.compositor/settings.json.
+ .
+ For the previous all-in-one bundle, install y5-compositor-full.
+
+Package: y5-compositor-settings
+Architecture: amd64
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+Breaks: y5-compositor (<< 1.4.1-1ubuntu1)
+Replaces: y5-compositor (<< 1.4.1-1ubuntu1)
+Description: Settings editor for Y5 Compositor
+ GUI/tool used to author a complete
+ ~/.config/y5.compositor/settings.json before starting a Y5 session.
+
+Package: y5-compositor-monitor
+Architecture: amd64
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+Breaks: y5-compositor (<< 1.4.1-1ubuntu1)
+Replaces: y5-compositor (<< 1.4.1-1ubuntu1)
+Description: Developer log viewer for Y5 Compositor
+ Tauri-based viewer for the compositor structured log stream
+ (y5.compositor.monitor).
+
+Package: y5-polkit-agent
+Architecture: amd64
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ polkitd
+Breaks: y5-compositor (<< 1.4.1-1ubuntu1)
+Replaces: y5-compositor (<< 1.4.1-1ubuntu1)
+Description: Polkit authentication agent for Y5 sessions
+ User systemd unit and iced-based polkit agent used with Y5 Compositor.
+
+Package: y5-xwayland-satellite
+Architecture: amd64
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ xwayland
+Recommends:
+ y5-compositor
+Breaks: y5-compositor (<< 1.4.1-1ubuntu1)
+Replaces: y5-compositor (<< 1.4.1-1ubuntu1)
+Description: Patched xwayland-satellite for Y5
+ X11 compatibility helper (xwayland-satellite) and its user systemd unit,
+ built with y5 popup-scale fixes.
+
+Package: y5-mx-gesture-daemon
+Architecture: amd64
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+Breaks: y5-compositor (<< 1.4.1-1ubuntu1)
+Replaces: y5-compositor (<< 1.4.1-1ubuntu1)
+Description: Logitech MX Master gesture daemon for Y5
+ Optional mx-gesture-daemon, udev rules, example config, and user unit.
+
+Package: y5-compositor-full
+Architecture: all
+Depends:
+ ${misc:Depends},
+ y5-compositor,
+ y5-compositor-settings,
+ y5-compositor-monitor,
+ y5-polkit-agent,
+ y5-xwayland-satellite,
+ y5-mx-gesture-daemon
+Description: Full Y5 Compositor bundle (metapackage)
+ Metapackage that pulls in the compositor session plus settings, developer
+ monitor, polkit agent, xwayland-satellite, and MX gesture daemon — equivalent
+ to the former monolithic y5-compositor package.

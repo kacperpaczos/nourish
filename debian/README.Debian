@@ -1,46 +1,47 @@
 y5-compositor for Debian / Ubuntu
 =================================
 
-Installation
-------------
+Tracks and packaging overview: see document/DISTRIBUTION.md in the source tree.
+
+Installation (PPA)
+------------------
 
   sudo add-apt-repository ppa:kacperpaczos/nourish
   sudo apt update
-  sudo apt install y5-compositor
+
+Core session only:
+
+  sudo apt install y5-compositor y5-compositor-settings
+
+Former full bundle (compositor + settings + monitor + polkit + xwayland + mx):
+
+  sudo apt install y5-compositor-full
 
 First-time configuration
 ------------------------
 
-The compositor requires a complete settings file before it starts:
-
   y5.compositor.settings
 
-This creates ~/.config/y5.compositor/settings.json. The session wrapper
-refuses to launch without it.
+Creates ~/.config/y5.compositor/settings.json. The session wrapper refuses to
+launch without it.
 
 Starting a session
 ------------------
 
-Log out and pick **Y5 Compositor** from your display manager's session menu.
+Log out and pick **Y5 Compositor** from your display manager.
 
-Optional components
--------------------
+Optional packages
+-----------------
 
-Polkit agent and xwayland-satellite are started with the session.
-MX Master gesture daemon is optional:
+  sudo apt install y5-polkit-agent y5-xwayland-satellite
+  sudo apt install y5-compositor-monitor
+  sudo apt install y5-mx-gesture-daemon
 
   systemctl --user enable --now mx-gesture-daemon.service
 
   mkdir -p ~/.config/mx-gesture-daemon
   cp /usr/share/y5-compositor/mx-gesture-daemon/config.example.toml \
      ~/.config/mx-gesture-daemon/config.toml
-
-  sudo usermod -aG plugdev "$USER"
-
-Developer log viewer
---------------------
-
-Launch y5.compositor.monitor from the application menu or a terminal.
 
 Building from source
 --------------------

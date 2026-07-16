@@ -1,4 +1,6 @@
 #!/usr/bin/make -f
+# Track B (Ubuntu PPA): compile via debian/scripts/build-bundle.sh only.
+# Never invoke compositor.installer/prepare.sh — see document/DISTRIBUTION.md.
 
 export DH_VERBOSE = 1
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
@@ -22,6 +24,12 @@ override_dh_auto_clean:
 		debian/cargo-home-build \
 		debian/cargo-target \
 		debian/y5-compositor \
+		debian/y5-compositor-settings \
+		debian/y5-compositor-monitor \
+		debian/y5-polkit-agent \
+		debian/y5-xwayland-satellite \
+		debian/y5-mx-gesture-daemon \
+		debian/y5-compositor-full \
 		debian/.debhelper \
 		compositor.developer/developer.tool/developer.tool.window/logs/node_modules
 	# Restore generated per-project vendor configs; keep cargo-vendor/ + npm-vendor/.
@@ -54,8 +62,12 @@ override_dh_auto_build:
 	debian/scripts/build-bundle.sh
 
 override_dh_auto_install:
-	debian/install-from-stage.sh debian/y5-compositor
+	debian/scripts/install-packages.sh
 
 # Bevy/Vulkan binaries are huge; dwz is not useful here.
 override_dh_dwz:
 	:
+
+# We install directly into debian/<pkg>/; nothing is left in debian/tmp.
+override_dh_missing:
+	dh_missing --list-missing
