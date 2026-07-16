@@ -2,9 +2,13 @@ tar-ignore = ^.git($|/)
 tar-ignore = (^|/)target($|/)
 tar-ignore = (^|/)\.cache($|/)
 tar-ignore = (^|/)node_modules($|/)
-tar-ignore = ^cargo-vendor($|/)
-tar-ignore = ^npm-vendor($|/)
-tar-ignore = ^rust-toolchain-dist($|/)
+# cargo-vendor/, npm-vendor/ and rust-toolchain-dist/ are a REQUIRED part of
+# the orig tarball (packed by debian/scripts/make-orig.sh — Launchpad has no
+# network). extend-diff-ignore only keeps local vendor drift out of the
+# auto-generated quilt patch; it does NOT exclude them from the orig.
+extend-diff-ignore = ^cargo-vendor/
+extend-diff-ignore = ^npm-vendor/
+extend-diff-ignore = ^rust-toolchain-dist/
 tar-ignore = ^debian/stage($|/)
 tar-ignore = ^debian/tmp
 tar-ignore = ^debian/cargo-home

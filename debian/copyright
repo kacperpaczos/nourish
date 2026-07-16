@@ -72,6 +72,18 @@ Comment:
  npm package tree for the Tauri log viewer, packed as
  npm-vendor/logs-node_modules.tar.xz. License texts are inside the archive.
 
+Files: rust-toolchain-dist/*
+Copyright: The Rust Project Developers
+License: Apache-2.0 or MIT
+Comment:
+ Prebuilt Rust toolchain (rustc, cargo, standard library) bundled for
+ offline Launchpad builds, because Ubuntu's packaged rustc is below this
+ tree's MSRV. Upstream: https://www.rust-lang.org (dual MIT/Apache-2.0).
+ The toolchain additionally contains LLVM components licensed under
+ Apache-2.0 WITH LLVM-exception; the bundled tree retains upstream license
+ texts, and rust-toolchain-dist/BUNDLE-INFO.txt records the exact bundled
+ version. See debian/scripts/bundle-rust-toolchain.sh for the pinned version.
+
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0.
  .
