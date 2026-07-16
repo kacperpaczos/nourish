@@ -1,0 +1,49 @@
+y5-compositor — building the Debian source package
+=================================================
+
+This package uses source format 3.0 (quilt). The upstream orig tarball
+includes Cargo and npm vendored trees so Launchpad can build offline.
+
+Creating a new orig tarball
+---------------------------
+
+Requirements on the maintainer machine (network allowed):
+
+  - rustc/cargo via rustup stable (>= 1.95; Bevy MSRV — Ubuntu
+    resolute's rustc 1.93 is too old, so the toolchain is bundled
+    into the orig as rust-toolchain-dist/)
+  - nodejs, npm, rsync, git, xz-utils
+
+From a clean git checkout:
+
+  debian/scripts/clean-tree.sh
+  debian/scripts/make-orig.sh
+
+This writes ../y5-compositor_<VERSION>.orig.tar.xz containing:
+
+  - upstream sources (no debian/)
+  - cargo-vendor/<component>/  (from cargo vendor --locked)
+  - npm-vendor/logs-node_modules.tar.xz
+  - rust-toolchain-dist/       (bundled rustc/cargo sysroot)
+
+For local experiments with a dirty tree / existing vendor trees:
+
+  debian/scripts/make-orig.sh --allow-dirty --reuse-vendor
+
+Building
+--------
+
+  debuild -us -uc -b          # binary
+  debuild -S -sa              # source (requires the orig above)
+
+Do not ship debian/stage, target/, rustup, or cargo registries in the
+source package. Use debian/scripts/clean-tree.sh before make-orig.
+
+Important: debian/rules uses `dh_clean -X.orig` because the default
+dh_clean deletes `*.orig`, which breaks `cargo-vendor/*/Cargo.toml.orig`
+checksums.
+
+Upload
+------
+
+  debian/upload-ppa.sh        # or: dput ppa:kacperpaczos/nourish …_source.changes

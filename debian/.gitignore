@@ -1,9 +1,15 @@
 stage/
 tmp/
+tmp-stage/
 cargo-home/
+cargo-home-build/
 cargo-target/
 rustup-home/
 rustup-init
 files
 package.tar.gz
 SHA256SUMS
+y5-compositor/
+.debhelper/
+*.substvars
+*.debhelper.log
