@@ -1,6 +1,10 @@
 y5-compositor — building the Debian source package
 =================================================
 
+This is **Track B** (Ubuntu PPA, compile from source). It must not call
+`compositor.installer/prepare.sh` or consume Track A `package.tar.gz`.
+See `document/DISTRIBUTION.md`.
+
 This package uses source format 3.0 (quilt). The upstream orig tarball
 includes Cargo and npm vendored trees so Launchpad can build offline.
 

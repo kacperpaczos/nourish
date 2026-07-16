@@ -1,5 +1,10 @@
 # Installing y5
 
+> **Distribution tracks:** this document describes the **prebuilt tarball** track
+> (`prepare.sh` → `package.tar.gz`). The Ubuntu PPA builds from source separately —
+> see [`document/DISTRIBUTION.md`](../document/DISTRIBUTION.md). Do not feed these
+> tarballs into Debian packaging.
+
 The y5 compositor ships as **prebuilt release tarballs**. The Fedora 44 bundle is the
 main one (the one-liner below); per-distro × per-arch bundles for **Debian 12/13,
 Ubuntu 24.04/26.04 and Arch** are published as the `bundles-rolling` GitHub release. Because
