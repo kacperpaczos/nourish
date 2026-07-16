@@ -1,0 +1,10 @@
+y5-compositor (1.4.0-1ubuntu2) resolute; urgency=medium
+
+  First-time setup: run `y5.compositor.settings` to create
+  ~/.config/y5.compositor/settings.json, then log out and select the
+  "Y5 Compositor" session from your display manager.
+
+  Optional MX Master support:
+    systemctl --user enable --now mx-gesture-daemon.service
+
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Thu, 16 Jul 2026 16:30:00 +0200

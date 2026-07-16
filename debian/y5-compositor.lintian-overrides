@@ -1,0 +1,11 @@
+# Large stripped Rust/Bevy compositor; no upstream manpages yet.
+y5-compositor: no-manual-page [usr/bin/y5.compositor]
+y5-compositor: no-manual-page [usr/bin/y5.compositor.settings]
+y5-compositor: no-manual-page [usr/bin/y5.compositor.monitor]
+y5-compositor: no-manual-page [usr/bin/y5-polkit-agent]
+y5-compositor: no-manual-page [usr/bin/mx-gesture-daemon]
+y5-compositor: no-manual-page [usr/bin/xwayland-satellite]
+# Bundled offline trees shipped in the orig (Launchpad has no network).
+y5-compositor source: source-is-missing [cargo-vendor/*]
+y5-compositor source: source-contains-prebuilt-binary [rust-toolchain-dist/*]
+y5-compositor source: source-contains-prebuilt-javascript-object [npm-vendor/*]
