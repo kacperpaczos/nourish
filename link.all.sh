@@ -71,4 +71,7 @@ cd ..
 
 
 # Conformance gate: L0/L1/L2 layout + naming + size policy (document/ARCHITECTURE.md).
-node workspace.lint.js
+# Skipped when Y5_SKIP_LINT=1 (Debian/PPA package builds, distro images).
+if [ -z "${Y5_SKIP_LINT:-}" ]; then
+  node workspace.lint.js
+fi
