@@ -14,6 +14,9 @@ After=y5-polkit-agent.service
 Slice=session.slice
 Type=exec
 ExecStart=/usr/libexec/y5-compositor/session
+# Tear down leftover session units (polkit agent etc.) once the compositor
+# exits; y5.shutdown.target Conflicts=graphical-session.target.
+ExecStopPost=-/usr/bin/systemctl --user start y5.shutdown.target
 
 [Install]
 WantedBy=graphical-session.target

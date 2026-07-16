@@ -74,6 +74,13 @@ override_dh_auto_build:
 override_dh_auto_install:
 	debian/scripts/install-packages.sh
 
+# Never enable user units globally: y5.service / xwayland.service carry
+# [Install] WantedBy=graphical-session.target, and a --global enable would
+# start the compositor inside GNOME/KDE sessions. The Wayland session entry
+# in wayland-sessions/ is the only intended entry point.
+override_dh_installsystemduser:
+	dh_installsystemduser --no-enable
+
 # Bevy/Vulkan binaries are huge; dwz is not useful here.
 override_dh_dwz:
 	:
