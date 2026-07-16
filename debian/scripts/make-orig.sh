@@ -31,6 +31,18 @@ NAME="y5-compositor"
 ORIG_BASE="${NAME}-${VERSION}"
 ORIG_TAR="${PARENT}/${NAME}_${VERSION}.orig.tar.xz"
 
+# VERSION and debian/changelog must agree, or dpkg-source rejects the pair
+# at upload time — fail here instead.
+CHVER="$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' debian/changelog)"
+case "$CHVER" in
+	"$VERSION-"*) ;;
+	*)
+		echo "make-orig: VERSION ($VERSION) does not match debian/changelog ($CHVER)" >&2
+		echo "make-orig: bump one of them (dch -v ${VERSION}-1ubuntu1 ...) and retry" >&2
+		exit 1
+		;;
+esac
+
 if [ "$ALLOW_DIRTY" -eq 0 ]; then
 	if ! git -C "$ROOT" diff --quiet || ! git -C "$ROOT" diff --cached --quiet; then
 		echo "make-orig: working tree is dirty; commit/stash or pass --allow-dirty" >&2

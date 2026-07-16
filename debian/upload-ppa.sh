@@ -27,16 +27,22 @@ rm -rf debian/stage debian/tmp debian/tmp-stage debian/cargo-home \
 
 if [ ! -f "$ORIG" ]; then
 	echo ">> creating orig tarball (needs network for cargo vendor / npm ci)" >&2
-	debian/scripts/make-orig.sh --allow-dirty
+	# No --allow-dirty here: a published orig must be reproducible from a commit.
+	debian/scripts/make-orig.sh
 fi
 
 docker run --rm \
 	-v "$PARENT:/build-parent:rw" \
 	-w "/build-parent/$NAME" \
 	-e DEBIAN_FRONTEND=noninteractive \
+	-e HOST_UID="$(id -u)" \
+	-e HOST_GID="$(id -g)" \
 	ubuntu:26.04 \
 	bash -c '
 set -euo pipefail
+# The build runs as root inside the container; hand artefacts back to the
+# invoking user even on failure, or clean-tree/git start needing sudo.
+trap "chown -R \"$HOST_UID:$HOST_GID\" \"$PWD\" 2>/dev/null; find .. -maxdepth 1 -type f -exec chown \"$HOST_UID:$HOST_GID\" {} + 2>/dev/null || true" EXIT
 apt-get update -qq
 apt-get install -y -qq devscripts debhelper lintian
 apt-get clean && rm -rf /var/lib/apt/lists/*

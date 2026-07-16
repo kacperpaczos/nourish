@@ -42,8 +42,10 @@ vendor_one() {
 	(
 		cd "$proj"
 		if ! cargo metadata --format-version 1 --locked >/dev/null 2>&1; then
-			echo "vendor-all: refreshing Cargo.lock for $rel" >&2
-			cargo generate-lockfile
+			echo "vendor-all: Cargo.lock in $rel is stale (does not match its manifest)." >&2
+			echo "vendor-all: run 'cargo update' there, review and COMMIT the lockfile diff," >&2
+			echo "vendor-all: then re-run. Refusing to regenerate lockfiles during packaging." >&2
+			exit 1
 		fi
 		# stdout is the config fragment; write crates into $dest
 		cargo vendor --locked "$dest" >"$VENDOR_ROOT/$name.config.toml"
