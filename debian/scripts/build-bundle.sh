@@ -1,9 +1,27 @@
 #!/usr/bin/env bash
-# Offline Debian build of the y5 bundle into debian/stage (mirrors prepare.sh --skip=installer).
+# Offline Debian/PPA build into debian/stage (Track B — see document/DISTRIBUTION.md).
+# Must NOT call compositor.installer/prepare.sh or consume Track A package.tar.gz.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
+
+# Refuse Fedora/tarball installer env so Track A stage is never reused as a PPA input.
+if [ -n "${Y5_INSTALL_STAGE:-}" ]; then
+	echo "build-bundle: refusing Y5_INSTALL_STAGE=${Y5_INSTALL_STAGE}" >&2
+	echo "build-bundle: Debian packaging must compile via this script (see document/DISTRIBUTION.md)" >&2
+	exit 1
+fi
+if [ -n "${Y5_REUSE_PREBUILT:-}" ] || [ -n "${Y5_USE_PREPARE_STAGE:-}" ]; then
+	echo "build-bundle: prebuilt-reuse flags are not supported on the Debian track" >&2
+	exit 1
+fi
+case "${Y5_DEBIAN_STAGE:-}" in
+	*compositor.installer/dist*|*y5-install*)
+		echo "build-bundle: Y5_DEBIAN_STAGE looks like a Track A installer path; refusing" >&2
+		exit 1
+		;;
+esac
 
 SCRIPTS="$ROOT/debian/scripts"
 STAGE="${Y5_DEBIAN_STAGE:-$ROOT/debian/stage}"
@@ -16,6 +34,8 @@ export CARGO_NET_OFFLINE=true
 export CARGO_HOME="${CARGO_HOME:-$ROOT/debian/cargo-home-build}"
 export Y5_SKIP_LINT="${Y5_SKIP_LINT:-1}"
 export Y5_TARGET_DIR="$TARGET_DIR"
+# Always rebuild stage for packaging (never skip when binaries already exist).
+rm -rf "$STAGE"
 mkdir -p "$CARGO_HOME" "$TARGET_DIR" "$BIN" "$TPL/pam" "$TPL/mx" "$TPL/xwayland"
 
 if [ ! -d "$ROOT/cargo-vendor/compositor" ]; then
