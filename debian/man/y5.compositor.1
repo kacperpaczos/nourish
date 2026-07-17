@@ -1,0 +1,36 @@
+.TH Y5.COMPOSITOR 1 "July 2026" "y5" "User Commands"
+.SH NAME
+y5.compositor \- Y5 Wayland compositor (DRM/KMS session)
+.SH SYNOPSIS
+.B y5.compositor
+.RI [ \-\-config\-file= PATH ]
+.SH DESCRIPTION
+.B y5.compositor
+is a Wayland compositor with a pannable, zoomable desktop and built-in
+screen capture. It runs directly on DRM/KMS and is normally started
+through the \fBY5 Compositor\fR entry of a display manager, which invokes
+the session wrapper
+.IR /usr/libexec/y5\-compositor/session ,
+not by running this binary manually.
+.PP
+All configuration is read once at startup from a single JSON file in
+which every field is required; the compositor refuses to start if the
+file is missing or incomplete. On the first session start the wrapper
+seeds a complete default file automatically.
+.SH OPTIONS
+.TP
+.BI \-\-config\-file= PATH
+Read the configuration from
+.I PATH
+instead of the default location.
+.SH FILES
+.TP
+.I ~/.config/y5.compositor/settings.json
+Per-user configuration, honouring
+.BR XDG_CONFIG_HOME .
+Edit with
+.BR y5.compositor.settings (1).
+.SH SEE ALSO
+.BR y5.compositor.settings (1),
+.BR y5.compositor.monitor (1),
+.BR xwayland\-satellite (1)

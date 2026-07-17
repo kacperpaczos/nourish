@@ -1,0 +1,27 @@
+.TH Y5.COMPOSITOR.SETTINGS 1 "July 2026" "y5" "User Commands"
+.SH NAME
+y5.compositor.settings \- configuration editor for the Y5 compositor
+.SH SYNOPSIS
+.B y5.compositor.settings
+.RB [ \-\-write\-default ]
+.SH DESCRIPTION
+.B y5.compositor.settings
+authors the complete settings file the Y5 compositor requires
+.RI ( ~/.config/y5.compositor/settings.json ).
+Run without arguments it opens an interactive terminal editor seeded
+from the existing file, or from the canonical defaults when none
+exists. Every field of the schema is always written, so the resulting
+file is guaranteed complete and valid.
+.SH OPTIONS
+.TP
+.B \-\-write\-default
+Non-interactive: write the canonical default settings and exit. Used by
+the session wrapper to seed the configuration on the first start.
+.SH FILES
+.TP
+.I ~/.config/y5.compositor/settings.json
+The settings file, honouring
+.BR XDG_CONFIG_HOME .
+Changes take effect at the next compositor launch.
+.SH SEE ALSO
+.BR y5.compositor (1)

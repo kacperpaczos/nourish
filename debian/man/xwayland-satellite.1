@@ -1,0 +1,34 @@
+.TH XWAYLAND-SATELLITE 1 "July 2026" "y5" "User Commands"
+.SH NAME
+xwayland\-satellite \- rootless Xwayland integration for Wayland compositors (y5 build)
+.SH SYNOPSIS
+.B xwayland\-satellite
+.RI [ DISPLAY ]
+.RI [ options ]
+.SH DESCRIPTION
+.B xwayland\-satellite
+grants rootless Xwayland integration to Wayland compositors that do not
+manage X11 clients themselves. It runs
+.BR Xwayland (1)
+on the given
+.I DISPLAY
+(for example \fB:12\fR) and maps X11 windows to Wayland surfaces.
+.PP
+This build carries y5-specific popup-scale fixes and is normally
+started by the
+.I xwayland.service
+systemd user unit bound to the compositor session.
+.SH OPTIONS
+This build accepts, among others:
+.TP
+.BI \-\-force\-scale " FACTOR"
+Report a fixed scale factor to X11 clients.
+.TP
+.B \-\-ignore\-fractional\-scale
+Ignore fractional scaling reported by the compositor.
+.TP
+.B \-\-popup\-fix
+Enable the y5 popup positioning/scale fixes.
+.SH SEE ALSO
+.BR y5.compositor (1),
+.BR Xwayland (1)

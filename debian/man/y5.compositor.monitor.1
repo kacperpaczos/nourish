@@ -1,0 +1,18 @@
+.TH Y5.COMPOSITOR.MONITOR 1 "July 2026" "y5" "User Commands"
+.SH NAME
+y5.compositor.monitor \- developer log viewer for the Y5 compositor
+.SH SYNOPSIS
+.B y5.compositor.monitor
+.SH DESCRIPTION
+.B y5.compositor.monitor
+is a graphical viewer for the Y5 compositor's structured log stream.
+It connects to a running compositor over gRPC and displays the records
+emitted by the compositor's built-in logging system live.
+.PP
+The verbosity of the stream is controlled by the compositor's
+configuration
+.RI ( log_level " in " settings.json ),
+not by this viewer.
+.SH SEE ALSO
+.BR y5.compositor (1),
+.BR y5.compositor.settings (1)

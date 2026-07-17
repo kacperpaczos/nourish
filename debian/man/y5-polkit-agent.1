@@ -1,0 +1,19 @@
+.TH Y5-POLKIT-AGENT 1 "July 2026" "y5" "User Commands"
+.SH NAME
+y5\-polkit\-agent \- polkit authentication agent for Y5 sessions
+.SH SYNOPSIS
+.B y5\-polkit\-agent
+.SH DESCRIPTION
+.B y5\-polkit\-agent
+is a graphical polkit authentication agent used inside Y5 compositor
+sessions. It registers with
+.BR polkitd (8)
+and presents authentication dialogs when a privileged action requires
+them.
+.PP
+It is normally started by the
+.I y5\-polkit\-agent.service
+systemd user unit as part of the graphical session, not manually.
+.SH SEE ALSO
+.BR y5.compositor (1),
+.BR polkitd (8)
