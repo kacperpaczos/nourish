@@ -14,6 +14,9 @@
 //                and a single module file besides lib.rs/main.rs/build.rs.
 //   5. FLAT    — the crate is flat: lib.rs and its single module sit next to
 //                Cargo.toml; no src/ dir, no .rs in subdirs (tests/ exempt).
+//   8. TODO    — no todo!()/unimplemented!() in member crates: both are
+//                guaranteed runtime panics, and a panic in the compositor
+//                takes down the whole session. tests/ are exempt.
 //
 // Allowlist: workspace.lint.allow.json — { "<repo-relative crate dir>": ["size"|"layout"|"naming"|...] }
 // Exempted rules are reported as warnings, not failures. The list is meant to shrink.
@@ -293,8 +296,18 @@ function lintCrate(root, crateDir) {
   //    WorldManager + loader construction is the delegation breach. Allowlisted
   //    crates are the documented-deferred sites (per-world background/iced) +
   //    legitimate world construction; the list must shrink to 0.
-  if (/lock_system_base::base::MAIN_WORLD/.test(rustSource(crateDir))) {
+  const src = rustSource(crateDir);
+  if (/lock_system_base::base::MAIN_WORLD/.test(src)) {
     report(crateRel, 'world-id', 'literal MAIN_WORLD — resolve the focused world via an Orchestrator focus accessor', meta);
+  }
+
+  // 8. TODO: todo!()/unimplemented!() are guaranteed runtime panics; in a
+  //    compositor a panic costs the user their whole session. New code must
+  //    take a controlled error path (or abort! with a message) instead.
+  //    Zero-baseline rule: no member crate carries these today — keep it so.
+  const todoHits = (src.match(/\b(?:todo|unimplemented)!\s*\(/g) || []).length;
+  if (todoHits > 0) {
+    report(crateRel, 'todo', `${todoHits} todo!()/unimplemented!() call(s) — guaranteed panics; use a controlled error path`, meta);
   }
 }
 
