@@ -99,10 +99,11 @@ the crate up.
 `cargo` commands must be run from inside a specific top-level workspace dir (there is no root
 `Cargo.toml`). Standard `cargo build` / `cargo test` / `cargo test <name>` work per-workspace.
 
-Compiler flags (warnings suppressed with `-A warnings`, and the **mold** linker) live in the
-repo-root `.cargo/config.toml`, which every workspace inherits. **Do not set `RUSTFLAGS`** — it
-replaces that config wholesale and silently drops the mold linker. See
-`environment/README.md` → "Build speed".
+Compiler flags (warnings suppressed with `-A warnings`) live in the repo-root
+`.cargo/config.toml`, which every workspace inherits. The **mold** linker was removed (it hung
+at link time in some environments — see `environment/README.md` → "Build speed"); builds use the
+default system linker. **Do not set `RUSTFLAGS`** — it replaces that config wholesale and
+silently drops the flags defined there.
 
 Build just the driving layer or the y5 expansion:
 
