@@ -1,7 +1,7 @@
 Source: y5-compositor
 Section: x11
 Priority: optional
-Maintainer: Kacper Paczos <kacperpaczos@protonmail.com>
+Maintainer: Kacper Paczos <kacperpaczos2024@protonmail.com>
 Build-Depends:
  debhelper-compat (= 13),
  clang,

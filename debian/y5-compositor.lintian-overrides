@@ -1,6 +1,2 @@
 # Large stripped Rust/Bevy compositor; no upstream manpage yet.
 y5-compositor: no-manual-page [usr/bin/y5.compositor]
-# Bundled offline trees shipped in the orig (Launchpad has no network).
-y5-compositor source: source-is-missing [cargo-vendor/*]
-y5-compositor source: source-contains-prebuilt-binary [rust-toolchain-dist/*]
-y5-compositor source: source-contains-prebuilt-javascript-object [npm-vendor/*]

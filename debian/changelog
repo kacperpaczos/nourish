@@ -25,7 +25,7 @@ y5-compositor (1.4.1-1ubuntu2) resolute; urgency=medium
   * copyright: document rust-toolchain-dist/ licensing.
   * Update maintainer e-mail; drop the no-op y5-compositor.postinst.
 
- -- Kacper Paczos <kacperpaczos@protonmail.com>  Thu, 16 Jul 2026 19:30:00 +0200
+ -- Kacper Paczos <kacperpaczos2024@protonmail.com>  Thu, 16 Jul 2026 19:30:00 +0200
 
 y5-compositor (1.4.1-1ubuntu1) resolute; urgency=medium
 

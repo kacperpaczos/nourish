@@ -1,0 +1,4 @@
+# Bundled offline trees shipped in the orig (Launchpad has no network).
+y5-compositor source: source-is-missing [cargo-vendor/*]
+y5-compositor source: source-contains-prebuilt-binary [rust-toolchain-dist/*]
+y5-compositor source: source-contains-prebuilt-javascript-object [npm-vendor/*]
