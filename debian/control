@@ -77,8 +77,9 @@ Description: Y5 Wayland compositor (core session)
  This package installs the DRM/KMS compositor binary, the display-manager
  session entry, systemd user units for the session, PAM, and portal config.
  .
- Run `y5.compositor.settings` (from y5-compositor-settings) before the first
- session to create ~/.config/y5.compositor/settings.json.
+ On first session start a complete default ~/.config/y5.compositor/
+ settings.json is seeded automatically; customize it any time with
+ `y5.compositor.settings` (from y5-compositor-settings).
  .
  For the previous all-in-one bundle, install y5-compositor-full.
 

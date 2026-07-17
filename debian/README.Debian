@@ -20,10 +20,13 @@ Former full bundle (compositor + settings + monitor + polkit + xwayland + mx):
 First-time configuration
 ------------------------
 
+None required: on first session start the wrapper seeds a complete default
+~/.config/y5.compositor/settings.json (the same canonical template the
+settings tool and the Track A installer use). To customize it:
+
   y5.compositor.settings
 
-Creates ~/.config/y5.compositor/settings.json. The session wrapper refuses to
-launch without it.
+An existing settings.json is never overwritten by the wrapper.
 
 Starting a session
 ------------------

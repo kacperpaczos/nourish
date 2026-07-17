@@ -13,9 +13,12 @@ y5-compositor (1.4.1-1ubuntu2) resolute; urgency=medium
     unset RUSTUP_TOOLCHAIN properly; add relro/bindnow link hardening.
   * y5.service: start y5.shutdown.target on stop so leftover session units
     (polkit agent) are torn down on logout.
-  * control: y5-compositor-settings is a hard Depends (the session refuses
-    to start without settings.json); drop xwayland from the core package
-    (owned by y5-xwayland-satellite).
+  * control: y5-compositor-settings is a hard Depends; drop xwayland from
+    the core package (owned by y5-xwayland-satellite).
+  * session: seed a complete default settings.json on first start via
+    `y5.compositor.settings --write-default` (the upstream canonical
+    template) instead of refusing to launch; an existing file is never
+    touched.
   * source/options: replace misleading tar-ignore entries for the vendor
     trees with extend-diff-ignore (they are a required part of the orig).
   * make-orig: verify VERSION matches the debian/changelog version.
