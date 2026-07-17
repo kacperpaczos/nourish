@@ -1,0 +1,7 @@
+usr/bin/y5.compositor
+usr/libexec/y5-compositor/session
+usr/lib/systemd/user/y5.service
+usr/lib/systemd/user/y5.shutdown.target
+usr/share/wayland-sessions/y5-compositor.desktop
+etc/pam.d/y5-lock
+etc/xdg/xdg-desktop-portal/y5-portals.conf

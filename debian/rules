@@ -72,6 +72,7 @@ override_dh_auto_build:
 	debian/scripts/build-bundle.sh
 
 override_dh_auto_install:
+	# Stage into debian/tmp; the package split lives in debian/*.install.
 	debian/scripts/install-packages.sh
 
 # Never enable user units globally: y5.service / xwayland.service carry
@@ -85,6 +86,7 @@ override_dh_installsystemduser:
 override_dh_dwz:
 	:
 
-# We install directly into debian/<pkg>/; nothing is left in debian/tmp.
+# Completeness gate: every file staged into debian/tmp must be claimed by
+# exactly one debian/*.install; a forgotten file fails the build.
 override_dh_missing:
-	dh_missing --list-missing
+	dh_missing --fail-missing

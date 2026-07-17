@@ -1,0 +1,4 @@
+usr/bin/mx-gesture-daemon
+usr/lib/systemd/user/mx-gesture-daemon.service
+usr/lib/udev/rules.d/42-logitech-hidpp.rules
+usr/share/y5-compositor/mx-gesture-daemon/config.example.toml

@@ -1,0 +1,2 @@
+usr/bin/y5-polkit-agent
+usr/lib/systemd/user/y5-polkit-agent.service
