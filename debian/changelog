@@ -19,6 +19,14 @@ y5-compositor (1.4.1-1ubuntu2) resolute; urgency=medium
     `y5.compositor.settings --write-default` (the upstream canonical
     template) instead of refusing to launch; an existing file is never
     touched.
+  * Track mx-gesture-daemon's Cargo.lock in git (a library-style local
+    .gitignore hid it); the orig previously shipped without it, which
+    would have failed `cargo build --frozen` on Launchpad.
+  * source/options: extend-diff-ignore the gitignored Tauri build
+    outputs (dist bundles, src-tauri/gen) so a source build after a
+    binary build does not fail on "unexpected upstream changes".
+  * postinst: purge stale global user-unit enablement left by pre-split
+    local builds, which auto-started y5 inside other desktops.
   * source/options: replace misleading tar-ignore entries for the vendor
     trees with extend-diff-ignore (they are a required part of the orig).
   * make-orig: verify VERSION matches the debian/changelog version.

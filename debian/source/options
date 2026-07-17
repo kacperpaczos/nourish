@@ -9,6 +9,11 @@ tar-ignore = (^|/)node_modules($|/)
 extend-diff-ignore = ^cargo-vendor/
 extend-diff-ignore = ^npm-vendor/
 extend-diff-ignore = ^rust-toolchain-dist/
+# Gitignored Tauri build outputs the binary build legitimately writes into the
+# working tree; without these, a source build after a binary build fails with
+# "unexpected upstream changes".
+extend-diff-ignore = (^|/)logs/dist/bundle\.(js|css|js\.map)$
+extend-diff-ignore = (^|/)src-tauri/gen/
 tar-ignore = ^debian/stage($|/)
 tar-ignore = ^debian/tmp
 tar-ignore = ^debian/cargo-home

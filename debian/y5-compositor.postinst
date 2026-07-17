@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+# Pre-split builds of y5-compositor (< 1.4.1-1ubuntu2, never published to the
+# PPA but installed locally from .debs) globally enabled the session user
+# units at install time. The split packages deliberately never enable
+# (dh_installsystemduser --no-enable): the wayland-sessions entry is the only
+# session entry point. On upgrade from such a build, purge the stale global
+# enablement + helper state so y5 does not auto-start inside other desktops.
+if [ "$1" = "configure" ] && [ -n "$2" ] &&
+	dpkg --compare-versions "$2" lt "1.4.1-1ubuntu2~"; then
+	for unit in y5.service xwayland.service y5-polkit-agent.service \
+		mx-gesture-daemon.service; do
+		deb-systemd-helper --user purge "$unit" >/dev/null 2>&1 || true
+	done
+fi
+
+#DEBHELPER#
+
+exit 0
