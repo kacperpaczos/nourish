@@ -5,7 +5,7 @@
 # Usage: setup-cargo-vendor.sh <name> <project-dir>
 set -euo pipefail
 
-NAME="${1:?}"
+: "${1:?}" # <name> arg kept for caller compatibility; the shared tree ignores it
 PROJ="$(cd "${2:?}" && pwd)"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VENDOR="$ROOT/cargo-vendor/shared"
