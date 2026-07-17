@@ -1,3 +1,17 @@
+y5-compositor (1.4.1-1ubuntu2) resolute; urgency=medium
+
+  First-time setup is no longer required: on first session start a
+  complete default ~/.config/y5.compositor/settings.json is seeded
+  automatically (an existing file is never touched). Customize any
+  time with:
+
+    y5.compositor.settings
+
+  (package y5-compositor-settings; now a hard dependency of
+  y5-compositor).
+
+ -- Kacper Paczos <kacperpaczos2024@protonmail.com>  Fri, 17 Jul 2026 16:30:00 +0200
+
 y5-compositor (1.4.1-1ubuntu1) resolute; urgency=medium
 
   The former monolithic y5-compositor package is split into components.
