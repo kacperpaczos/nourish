@@ -67,6 +67,20 @@ Important: debian/rules uses `dh_clean -X.orig` because the default
 dh_clean deletes `*.orig`, which breaks `cargo-vendor/*/Cargo.toml.orig`
 checksums.
 
+Versioning / changelog
+----------------------
+
+VERSION at the repo root is the single source of truth. Never hand-type
+changelog entries; start them with:
+
+  debian/scripts/bump-changelog.sh          # next -1ubuntuN revision
+  debian/scripts/bump-changelog.sh 1.5.0    # new upstream version
+                                            # (updates VERSION, needs a
+                                            # new orig via make-orig.sh)
+
+make-orig.sh and the debian-checks CI job both refuse a VERSION /
+changelog mismatch.
+
 Upload
 ------
 
