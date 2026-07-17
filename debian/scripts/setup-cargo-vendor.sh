@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Install a per-project .cargo/config.toml that points at cargo-vendor/<name>.
+# Install a per-project .cargo/config.toml pointing at the single shared
+# vendor tree (cargo-vendor/shared). The <name> argument is kept for caller
+# compatibility but no longer selects a per-project tree.
 # Usage: setup-cargo-vendor.sh <name> <project-dir>
 set -euo pipefail
 
 NAME="${1:?}"
 PROJ="$(cd "${2:?}" && pwd)"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VENDOR="$ROOT/cargo-vendor/$NAME"
+VENDOR="$ROOT/cargo-vendor/shared"
 CFG="$PROJ/.cargo/config.toml"
 
 [ -d "$VENDOR" ] || { echo "setup-cargo-vendor: missing $VENDOR (run vendor-all / make-orig)" >&2; exit 1; }

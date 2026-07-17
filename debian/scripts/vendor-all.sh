@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Vendor Cargo crates (+ npm deps for the Tauri log viewer) for offline PPA builds.
 # Output (not committed to git — packed into the orig tarball by make-orig.sh):
-#   cargo-vendor/<name>/
+#   cargo-vendor/shared/           one deduplicated tree for ALL six projects
+#   cargo-vendor/shared.config.toml
 #   npm-vendor/logs-node_modules.tar.xz
 set -euo pipefail
 
@@ -19,44 +20,56 @@ fi
 
 VENDOR_ROOT="$ROOT/cargo-vendor"
 NPM_VENDOR="$ROOT/npm-vendor"
+
+# Relative paths of the six projects that own a Cargo.lock. The first one is
+# the primary manifest for `cargo vendor`; the rest join via --sync, producing
+# ONE deduplicated tree (separate trees held ~49% duplicate crate copies).
+PROJECTS=(
+	"compositor.kernel/kernel.loader"
+	"compositor.installer/component/pollkit-agent"
+	"compositor.installer/component/mx-gesture-daemon"
+	"compositor.installer/component/xwayland-satellite/xwayland-fixes"
+	"compositor.installer/component/settings-editor"
+	"compositor.developer/developer.tool/developer.tool.window/logs/src-tauri"
+)
+
+# Drop leftover GENERATED vendor configs first — they point at a vendor tree
+# this script is about to replace, and would fail the lockfile guard below
+# with a misleading "unable to update registry" error.
+for rel in "${PROJECTS[@]}"; do
+	cfg="$ROOT/$rel/.cargo/config.toml"
+	if [ -f "$cfg" ] && grep -q 'y5-debian-vendor' "$cfg" 2>/dev/null; then
+		if [ -f "${cfg}.y5-bak" ]; then mv -f "${cfg}.y5-bak" "$cfg"; else rm -f "$cfg"; fi
+	fi
+done
+
+# Guard: refuse a stale Cargo.lock instead of silently regenerating it here.
+# Lockfile updates must be reviewed commits, never a packaging side effect.
+for rel in "${PROJECTS[@]}"; do
+	proj="$ROOT/$rel"
+	[ -f "$proj/Cargo.lock" ] || { echo "vendor-all: missing Cargo.lock in $rel" >&2; exit 1; }
+	if ! (cd "$proj" && cargo metadata --format-version 1 --locked >/dev/null 2>&1); then
+		echo "vendor-all: Cargo.lock in $rel is stale (does not match its manifest)." >&2
+		echo "vendor-all: run 'cargo update' there, review and COMMIT the lockfile diff," >&2
+		echo "vendor-all: then re-run. Refusing to regenerate lockfiles during packaging." >&2
+		exit 1
+	fi
+done
+
 rm -rf "$VENDOR_ROOT" "$NPM_VENDOR"
 mkdir -p "$VENDOR_ROOT" "$NPM_VENDOR"
 
-# name|relative path of crate/workspace that owns Cargo.lock
-PROJECTS=(
-	"compositor|compositor.kernel/kernel.loader"
-	"polkit|compositor.installer/component/pollkit-agent"
-	"mx|compositor.installer/component/mx-gesture-daemon"
-	"xwayland|compositor.installer/component/xwayland-satellite/xwayland-fixes"
-	"settings|compositor.installer/component/settings-editor"
-	"tauri|compositor.developer/developer.tool/developer.tool.window/logs/src-tauri"
-)
-
-vendor_one() {
-	local name="$1" rel="$2"
-	local proj="$ROOT/$rel"
-	local dest="$VENDOR_ROOT/$name"
-	[ -f "$proj/Cargo.lock" ] || { echo "vendor-all: missing Cargo.lock in $rel" >&2; exit 1; }
-	echo ">> cargo vendor [$name] from $rel" >&2
-	mkdir -p "$dest"
-	(
-		cd "$proj"
-		if ! cargo metadata --format-version 1 --locked >/dev/null 2>&1; then
-			echo "vendor-all: Cargo.lock in $rel is stale (does not match its manifest)." >&2
-			echo "vendor-all: run 'cargo update' there, review and COMMIT the lockfile diff," >&2
-			echo "vendor-all: then re-run. Refusing to regenerate lockfiles during packaging." >&2
-			exit 1
-		fi
-		# stdout is the config fragment; write crates into $dest
-		cargo vendor --locked "$dest" >"$VENDOR_ROOT/$name.config.toml"
-	)
-}
-
-for entry in "${PROJECTS[@]}"; do
-	name="${entry%%|*}"
-	rel="${entry#*|}"
-	vendor_one "$name" "$rel"
+DEST="$VENDOR_ROOT/shared"
+SYNC_ARGS=()
+for rel in "${PROJECTS[@]:1}"; do
+	SYNC_ARGS+=(--sync "$ROOT/$rel/Cargo.toml")
 done
+echo ">> cargo vendor [shared] from ${PROJECTS[0]} + ${#SYNC_ARGS[@]} synced manifests" >&2
+(
+	cd "$ROOT/${PROJECTS[0]}"
+	# stdout is the config fragment; write crates into $DEST
+	cargo vendor --locked "${SYNC_ARGS[@]}" "$DEST" >"$VENDOR_ROOT/shared.config.toml"
+)
 
 LOGS_DIR="$ROOT/compositor.developer/developer.tool/developer.tool.window/logs"
 echo ">> npm ci (Tauri frontend) in $LOGS_DIR" >&2
@@ -75,10 +88,11 @@ echo ">> npm ci (Tauri frontend) in $LOGS_DIR" >&2
 	echo "cargo: $(cargo --version)"
 	echo "rustc: $(rustc --version 2>/dev/null || echo missing)"
 	echo "npm: $(npm --version)"
-	for entry in "${PROJECTS[@]}"; do
-		name="${entry%%|*}"
-		echo "cargo-vendor/$name"
+	echo "layout: single shared tree (cargo-vendor/shared) for:"
+	for rel in "${PROJECTS[@]}"; do
+		echo "  - $rel"
 	done
+	echo "crates: $(find "$DEST" -mindepth 1 -maxdepth 1 -type d | wc -l)"
 	echo "npm-vendor/logs-node_modules.tar.xz"
 } >"$VENDOR_ROOT/MANIFEST.txt"
 

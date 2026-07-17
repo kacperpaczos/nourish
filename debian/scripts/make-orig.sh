@@ -80,7 +80,7 @@ rm -rf \
 	"$STAGING/$ORIG_BASE/rust-toolchain-dist"
 find "$STAGING/$ORIG_BASE" -type d \( -name target -o -name node_modules \) -prune -exec rm -rf {} + 2>/dev/null || true
 
-if [ "$REUSE_VENDOR" -eq 1 ] && [ -d "$ROOT/cargo-vendor/compositor" ] && [ -f "$ROOT/npm-vendor/logs-node_modules.tar.xz" ]; then
+if [ "$REUSE_VENDOR" -eq 1 ] && [ -d "$ROOT/cargo-vendor/shared" ] && [ -f "$ROOT/npm-vendor/logs-node_modules.tar.xz" ]; then
 	echo ">> reusing existing cargo-vendor/ and npm-vendor/" >&2
 	cp -a "$ROOT/cargo-vendor" "$STAGING/$ORIG_BASE/"
 	cp -a "$ROOT/npm-vendor" "$STAGING/$ORIG_BASE/"

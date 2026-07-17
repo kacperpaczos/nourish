@@ -61,7 +61,7 @@ override_dh_auto_clean:
 		compositor.developer/developer.tool/developer.tool.window/logs/src-tauri/target
 
 override_dh_auto_configure:
-	@test -d $(CURDIR)/cargo-vendor/compositor \
+	@test -d $(CURDIR)/cargo-vendor/shared \
 		|| { echo "debian/rules: cargo-vendor/ missing — rebuild orig with debian/scripts/make-orig.sh" >&2; exit 1; }
 	@test -f $(CURDIR)/npm-vendor/logs-node_modules.tar.xz \
 		|| { echo "debian/rules: npm-vendor/ missing — rebuild orig with debian/scripts/make-orig.sh" >&2; exit 1; }

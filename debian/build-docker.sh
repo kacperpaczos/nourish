@@ -8,7 +8,7 @@ ROOT="$(cd "$HERE/.." && pwd)"
 PARENT="$(cd "$ROOT/.." && pwd)"
 NAME="$(basename "$ROOT")"
 
-if [ ! -d "$ROOT/cargo-vendor/compositor" ] || [ ! -f "$ROOT/npm-vendor/logs-node_modules.tar.xz" ]; then
+if [ ! -d "$ROOT/cargo-vendor/shared" ] || [ ! -f "$ROOT/npm-vendor/logs-node_modules.tar.xz" ]; then
 	echo "build-docker: missing cargo-vendor/ or npm-vendor/; run:" >&2
 	echo "  debian/scripts/make-orig.sh --allow-dirty" >&2
 	echo "  # then extract vendors, or: debian/scripts/vendor-all.sh" >&2

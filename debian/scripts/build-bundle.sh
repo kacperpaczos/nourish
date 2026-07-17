@@ -45,7 +45,7 @@ export RUSTFLAGS="-A warnings -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now"
 rm -rf "$STAGE"
 mkdir -p "$CARGO_HOME" "$TARGET_DIR" "$BIN" "$TPL/pam" "$TPL/mx" "$TPL/xwayland"
 
-if [ ! -d "$ROOT/cargo-vendor/compositor" ]; then
+if [ ! -d "$ROOT/cargo-vendor/shared" ]; then
 	echo "build-bundle: cargo-vendor/ missing — run debian/scripts/make-orig.sh or vendor-all.sh" >&2
 	exit 1
 fi

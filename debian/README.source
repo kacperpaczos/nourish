@@ -8,6 +8,24 @@ See `document/DISTRIBUTION.md`.
 This package uses source format 3.0 (quilt). The upstream orig tarball
 includes Cargo and npm vendored trees so Launchpad can build offline.
 
+Deliberate deviations from packaging defaults
+---------------------------------------------
+
+  - No debian/watch: releases come from this repository itself (the orig
+    is produced by debian/scripts/make-orig.sh, not downloaded), so there
+    is no upstream URL to watch.
+  - debian/patches/ is empty by design: the quilt format is used only to
+    carry a separate orig tarball; source changes belong in git, not in
+    quilt patches.
+  - Architecture: amd64 only for now. The compositor tree targets aarch64
+    as well (see .cargo/config.toml), but no arm64 builder has been
+    validated for the PPA; revisit when one is. The y5-compositor-full
+    metapackage must switch from "all" to the arch list at that point,
+    since it depends on arch-specific packages.
+  - rust-toolchain-dist/ ships a pinned rustc sysroot (see
+    debian/scripts/bundle-rust-toolchain.sh) because Ubuntu's rustc is
+    below the tree's MSRV; BUNDLE-INFO.txt inside records the version.
+
 Creating a new orig tarball
 ---------------------------
 
@@ -26,7 +44,9 @@ From a clean git checkout:
 This writes ../y5-compositor_<VERSION>.orig.tar.xz containing:
 
   - upstream sources (no debian/)
-  - cargo-vendor/<component>/  (from cargo vendor --locked)
+  - cargo-vendor/shared/       (ONE deduplicated tree for all six
+                                Cargo projects, from cargo vendor
+                                --locked with --sync)
   - npm-vendor/logs-node_modules.tar.xz
   - rust-toolchain-dist/       (bundled rustc/cargo sysroot)
 
