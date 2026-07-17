@@ -1,0 +1,133 @@
+name: Debian package (Track B)
+
+# Gate for the PPA packaging path (debian/). Two tiers:
+#  - debian-checks: fast static gates on every PR that touches packaging inputs.
+#  - debian-build:  the full offline package build + artifact smoke tests.
+#    Too heavy for every PR (hours cold), so it runs nightly and on demand;
+#    label a PR `debian-build` to force it there.
+# See document/DISTRIBUTION.md (Track B) and debian/README.source.
+
+on:
+  pull_request:
+    paths:
+      - 'debian/**'
+      - 'VERSION'
+      - '**/Cargo.lock'
+      - '.github/workflows/debian-package.yml'
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debian-checks:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shell syntax (packaging scripts)
+        run: |
+          for f in debian/scripts/*.sh debian/*.sh debian/session/session; do
+            bash -n "$f"
+          done
+
+      - name: VERSION matches debian/changelog
+        run: |
+          v="$(tr -d '[:space:]' < VERSION)"
+          ch="$(sed -n '1s/^[^(]*(\([^)]*\)).*/\1/p' debian/changelog)"
+          case "$ch" in
+            "$v-"*) echo "OK: VERSION=$v changelog=$ch" ;;
+            *) echo "::error::VERSION ($v) != debian/changelog ($ch)"; exit 1 ;;
+          esac
+
+      - name: Lockfiles are current (no silent regeneration — see vendor-all.sh)
+        run: |
+          rustup toolchain install --profile minimal 1.97.0
+          rustup default 1.97.0
+          fail=0
+          for d in \
+            compositor.kernel/kernel.loader \
+            compositor.installer/component/pollkit-agent \
+            compositor.installer/component/mx-gesture-daemon \
+            compositor.installer/component/xwayland-satellite/xwayland-fixes \
+            compositor.installer/component/settings-editor \
+            compositor.developer/developer.tool/developer.tool.window/logs/src-tauri
+          do
+            ( cd "$d" && cargo metadata --format-version 1 --locked >/dev/null 2>&1 ) \
+              || { echo "::error::stale Cargo.lock in $d — run cargo update there and commit"; fail=1; }
+          done
+          exit $fail
+
+      - name: Control file sanity
+        run: |
+          # Uninstallable-relation and syntax-level parse via dpkg tooling.
+          sudo apt-get update -qq && sudo apt-get install -y -qq devscripts lintian
+          dpkg-parsechangelog -ldebian/changelog >/dev/null
+          # Overrides placement: binary override files must not carry "source:" tags.
+          if grep -l ' source: ' debian/*.lintian-overrides 2>/dev/null; then
+            echo "::error::source overrides belong in debian/source/lintian-overrides"; exit 1
+          fi
+
+  debian-build:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'debian-build')
+    runs-on: ubuntu-latest
+    timeout-minutes: 320
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free runner disk (the build needs ~12 GB over the checkout)
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/.ghcup /usr/lib/jvm /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Rust toolchain (pinned — must match bundle-rust-toolchain.sh)
+        run: |
+          rustup toolchain install --profile minimal 1.97.0
+          rustup default 1.97.0
+
+      - name: Vendor offline trees (network allowed here, not in the build)
+        run: |
+          debian/scripts/vendor-all.sh
+          debian/scripts/bundle-rust-toolchain.sh
+
+      - name: Build packages (offline, jobs=2 like a Launchpad builder)
+        run: CARGO_BUILD_JOBS=2 debian/build-docker.sh
+
+      - name: Smoke-test artifacts
+        run: |
+          cd ..
+          v="$(tr -d '[:space:]' < "$GITHUB_WORKSPACE/VERSION")"
+          set -x
+          # All seven packages exist.
+          for p in y5-compositor y5-compositor-settings y5-compositor-monitor \
+                   y5-polkit-agent y5-xwayland-satellite y5-mx-gesture-daemon \
+                   y5-compositor-full; do
+            ls "$p"_"$v"-*.deb
+          done
+          # Core package ships the session entry, unit, teardown target and NEWS.
+          dpkg-deb -c y5-compositor_"$v"-*_amd64.deb | grep -E \
+            'wayland-sessions/y5-compositor.desktop|systemd/user/y5.service|y5.shutdown.target|doc/y5-compositor/NEWS'
+          # No global enablement of user units (C4 in the audit).
+          for p in y5-compositor y5-xwayland-satellite y5-polkit-agent; do
+            dpkg-deb -e "$p"_"$v"-*_amd64.deb ctl-"$p"
+            ! grep -rn -- '--global enable' ctl-"$p"
+          done
+          # Monitor binary embeds its frontend shell (C6 regression guard).
+          dpkg-deb -x y5-compositor-monitor_"$v"-*_amd64.deb mon
+          strings mon/usr/bin/y5.compositor.monitor | grep -q 'bundle.js'
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: debian-packages
+          path: |
+            ../*.deb
+            ../*.buildinfo
+          retention-days: 14
