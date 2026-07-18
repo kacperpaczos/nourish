@@ -1,4 +1,6 @@
 # Bundled offline trees shipped in the orig (Launchpad has no network).
 y5-compositor source: source-is-missing [cargo-vendor/*]
 y5-compositor source: source-contains-prebuilt-binary [rust-toolchain-dist/*]
-y5-compositor source: source-contains-prebuilt-javascript-object [npm-vendor/*]
+# Windows test fixtures / loader stubs inside vendored crates (libloading
+# test DLLs, webview2-com-sys WebView2Loader) — never built or shipped.
+y5-compositor source: source-contains-prebuilt-windows-binary [cargo-vendor/*]

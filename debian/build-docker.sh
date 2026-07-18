@@ -31,7 +31,7 @@ set -euo pipefail
 trap "chown -R \"$HOST_UID:$HOST_GID\" \"$PWD\" 2>/dev/null; find .. -maxdepth 1 -type f -exec chown \"$HOST_UID:$HOST_GID\" {} + 2>/dev/null || true" EXIT
 apt-get update -qq
 apt-get install -y -qq devscripts debhelper lintian \
-	clang libclang-dev pkg-config git ca-certificates \
+	clang libclang-dev pkgconf git ca-certificates \
 	protobuf-compiler libprotobuf-dev libpam0g-dev \
 	libdisplay-info-dev libinput-dev libseat-dev libxkbcommon-dev libpixman-1-dev \
 	libsystemd-dev libudev-dev libwayland-dev wayland-protocols \

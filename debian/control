@@ -6,7 +6,7 @@ Build-Depends:
  debhelper-compat (= 13),
  clang,
  libclang-dev,
- pkg-config,
+ pkgconf,
  git,
  ca-certificates,
  protobuf-compiler,
