@@ -22,7 +22,7 @@ command -v dch >/dev/null 2>&1 || {
 }
 
 DIST="resolute"
-export DEBEMAIL="${DEBEMAIL:-kacperpaczos2024@protonmail.com}"
+export DEBEMAIL="${DEBEMAIL:-kacperpaczos2024@proton.me}"
 export DEBFULLNAME="${DEBFULLNAME:-Kacper Paczos}"
 
 CUR="$(tr -d '[:space:]' <VERSION)"

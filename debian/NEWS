@@ -10,7 +10,7 @@ y5-compositor (1.4.1-1ubuntu2) resolute; urgency=medium
   (package y5-compositor-settings; now a hard dependency of
   y5-compositor).
 
- -- Kacper Paczos <kacperpaczos2024@protonmail.com>  Fri, 17 Jul 2026 16:30:00 +0200
+ -- Kacper Paczos <kacperpaczos2024@proton.me>  Fri, 17 Jul 2026 16:30:00 +0200
 
 y5-compositor (1.4.1-1ubuntu1) resolute; urgency=medium
 
